@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS `figment_feed`, `figment_thread`;
+DROP VIEW IF EXISTS `figment_message_display`;
 
 DROP TABLE IF EXISTS `figment_user`, `figment_profile`, `figment_avatar`,
   `figment_banner`, `figment_color_scheme`, `figment_message`, `figment_upload`,
