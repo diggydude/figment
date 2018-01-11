@@ -65,6 +65,18 @@
     {
     } // formatCode
 
+    public function parseUris($rawText)
+    {
+    } // parseUris
+
+    public function checkLink($uri)
+    {
+    } // checkLink
+
+    public function parseRawText($text)
+    {
+    } // parseRawText
+
     public function composeLayout()
     {
     } // composeLayout
