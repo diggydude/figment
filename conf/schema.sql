@@ -237,7 +237,7 @@ CREATE VIEW `figment_message_display` AS
 CREATE VIEW `figment_profile_display` AS
   SELECT `usr`.`username`            AS `username`,
          `usr`.`joined`              AS `joined`,
-         `prf`.`display_name         AS `displayName`,
+         `prf`.`display_name`        AS `displayName`,
          `prf`.`biography`           AS `biography`,
          `prf`.`birthday`            AS `birthday`,
          `prf`.`gender`              AS `gender`,
