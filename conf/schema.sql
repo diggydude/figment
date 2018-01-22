@@ -1,11 +1,12 @@
-DROP VIEW IF EXISTS `figment_message_display`, `figment_profile_display`;
+DROP VIEW IF EXISTS `figment_message_display`, `figment_engagement_display`,
+  `figment_profile_display`;
 
 DROP TABLE IF EXISTS `figment_avatar`,  `figment_banner`,   `figment_color_scheme`,
   `figment_user`,    `figment_profile`, `figment_message`,  `figment_upload`,
   `figment_follow`,  `figment_mention`, `figment_hashtag`,  `figment_tagged`,
   `figment_like`,    `figment_dislike`, `figment_bookmark`, `figment_repost`,
   `figment_views`,   `figment_clicks`,  `figment_blocked`,  `figment_reason`,
-  `figment_flagged`, `figment_banned`,  `figment_emoticon`;
+  `figment_flagged`, `figment_banned`,  `figment_emoticon`, `figment_redirect`;
 
 CREATE TABLE `figment_avatar` (
   `avatar_id` INT(11)     NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -79,9 +80,9 @@ CREATE TABLE `figment_upload` (
 CREATE TABLE `figment_follow` (
   `follower` INT(11) NOT NULL,
   `followed` INT(11) NOT NULL,
-  UNIQUE KEY (`follower`, `followed`)
+  UNIQUE KEY (`follower`, `followed`),
   FOREIGN KEY (`follower`) REFERENCES `figment_user` (`user_id`),
-  FOREIGN KEY (`followed`) REFERENCES `figment_user` (`user_id`),
+  FOREIGN KEY (`followed`) REFERENCES `figment_user` (`user_id`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 CREATE TABLE `figment_mention` (
@@ -147,13 +148,13 @@ CREATE TABLE `figment_reply` (
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 CREATE TABLE `figment_clicks` (
-  `message` INT(11) NOT NULL,
+  `message` INT(11) NOT NULL UNIQUE KEY,
   `clicks`  INT(11) NOT NULL DEFAULT 0,
   FOREIGN KEY (`message`) REFERENCES `figment_message` (`message_id`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 CREATE TABLE `figment_views` (
-  `message` INT(11) NOT NULL,
+  `message` INT(11) NOT NULL UNIQUE KEY,
   `views`   INT(11) NOT NULL DEFAULT 0,
   FOREIGN KEY (`message`) REFERENCES `figment_message` (`message_id`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
@@ -163,14 +164,13 @@ CREATE TABLE `figment_blocked` (
   `blocked` INT(11) NOT NULL,
   UNIQUE KEY (`blocker`, `blocked`),
   FOREIGN KEY (`blocker`) REFERENCES `figment_user` (`user_id`),
-  FOREIGN KEY (`blocked`) REFERENCES `figment_user` (`user_id`),
-  UNIQUE KEY (`blocker`, `blocked`)
+  FOREIGN KEY (`blocked`) REFERENCES `figment_user` (`user_id`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 CREATE TABLE `figment_reason` (
   `reason_id` INT(11)     NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `text`      VARCAR(255) NOT NULL,
-  UNIQUE KEY (`reason`),
+  UNIQUE KEY (`reason`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 INSERT INTO `figment_reason` (`text`) VALUES ('Posting child pornography.');
@@ -208,6 +208,13 @@ CREATE TABLE `figment_emoticon` (
   UNIQUE KEY (`filename`)
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
+CREATE TABLE `figment_redirect` (
+  `uri`        TEXT        NOT NULL UNIQUE KEY,
+  `short_uri`  VARCHAR(32) NOT NULL UNIQUE KEY,
+  `in_message` INT(11)     NOT NULL,
+  FOREIGN KEY (`in_message`) REFERENCES `figment_message` (`message_id`)
+) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
+
 CREATE VIEW `figment_message_display` AS
   SELECT `msg`.`formatted`          AS `message`,
          `msg`.`posted_at`          AS `postedAt`,
@@ -219,8 +226,7 @@ CREATE VIEW `figment_message_display` AS
          count(`lik`.`liked_by`)    AS `likes`,
          count(`dsl`.`disliked_by`) AS `dislikes`,
          count(`rps`.`reposted_in`) AS `reposts`,
-         count(`rpl`.`reply`)       AS `replies`,
-         `vue`.`views`              AS `views`
+         count(`rpl`.`reply`)       AS `replies`
     FROM      `figment_message` AS `msg`
     LEFT JOIN `figment_user`    AS `usr` ON `usr`.`user_id`    = `msg`.`posted_by`
     LEFT JOIN `figment_profile` AS `prf` ON `prf`.`user_id`    = `usr`.`user_id`
@@ -231,8 +237,14 @@ CREATE VIEW `figment_message_display` AS
     LEFT JOIN `figment_like`    AS `lik` ON `lik`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_dislike` AS `dsl` ON `dsl`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_repost`  AS `rps` ON `rps`.`original`   = `msg`.`message_id`
-    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`
-    LEFT JOIN `figment_views`   AS `vue` ON `vue`.`message`    = `msg`.`message_id`;
+    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`;
+
+CREATE VIEW `figment_engagement_display` AS
+  SELECT `vue`.`views`  AS `views`,
+         `clk`.`clicks` AS `clicks`
+    FROM      `figment_message` AS `msg`
+    LEFT JOIN `figment_views`   AS `vue` ON `vue`.`message` = `msg`.`message_id`
+    LEFT JOIN `figment_clicks`  AS `clk` ON `clk`.`message` = `msg`.`message_id`;
 
 CREATE VIEW `figment_profile_display` AS
   SELECT `usr`.`username`            AS `username`,
