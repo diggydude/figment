@@ -230,7 +230,10 @@ CREATE VIEW `figment_message_display` AS
          count(`lik`.`liked_by`)    AS `likes`,
          count(`dsl`.`disliked_by`) AS `dislikes`,
          count(`rps`.`reposted_in`) AS `reposts`,
-         count(`rpl`.`reply`)       AS `replies`
+         count(`rpl`.`reply`)       AS `replies`,
+         count(`ylk`.`liked_by`)    AS `youLikedIt`,
+         count(`yds`.`disliked_by`) AS `youDislikedIt`,
+         count(`yrp`.`reposted_in`) AS `youRepostedIt`
     FROM      `figment_message` AS `msg`
     LEFT JOIN `figment_user`    AS `usr` ON `usr`.`user_id`    = `msg`.`posted_by`
     LEFT JOIN `figment_profile` AS `prf` ON `prf`.`user_id`    = `usr`.`user_id`
@@ -241,7 +244,12 @@ CREATE VIEW `figment_message_display` AS
     LEFT JOIN `figment_like`    AS `lik` ON `lik`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_dislike` AS `dsl` ON `dsl`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_repost`  AS `rps` ON `rps`.`original`   = `msg`.`message_id`
-    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`;
+    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`
+    LEFT JOIN `figment_like`    AS `ylk` ON `ylk`.`message`    = `msg`.`message_id`
+    LEFT JOIN `figment_dislike` AS `yds` ON `yds`.`message`    = `msg`.`message_id`
+    LEFT JOIN `figment_repost`  AS `yrp` ON `yrp`.`message`    = `msg`.`message_id`
+    LEFT JOIN `figment_message` AS `yri` ON `yri`.`message_id` = `yrp`.`reposted_in`
+    LEFT JOIN `figment_user`    AS `you` ON `you`.`user_id`    = `yri`.`posted_by`;
 
 CREATE VIEW `figment_engagement_display` AS
   SELECT `vue`.`views`                AS `views`,
