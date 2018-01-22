@@ -244,7 +244,7 @@ CREATE VIEW `figment_message_display` AS
     LEFT JOIN `figment_like`    AS `lik` ON `lik`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_dislike` AS `dsl` ON `dsl`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_repost`  AS `rps` ON `rps`.`original`   = `msg`.`message_id`
-    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`   /* WHERE `rpl`.`posted_by`   = <curr_user_id> */
+    LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`
     LEFT JOIN `figment_like`    AS `ylk` ON `ylk`.`message`    = `msg`.`message_id`   /* WHERE `ylk`.`liked_by`    = <curr_user_id> */
     LEFT JOIN `figment_dislike` AS `yds` ON `yds`.`message`    = `msg`.`message_id`   /* WHERE `yds`.`disliked_by` = <curr_user_id> */
     LEFT JOIN `figment_repost`  AS `yrp` ON `yrp`.`message`    = `msg`.`message_id`
