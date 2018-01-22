@@ -221,6 +221,7 @@ CREATE TABLE `figment_redirect` (
 
 CREATE VIEW `figment_message_display` AS
   SELECT `msg`.`formatted`           AS `message`,
+         `msg`.`pinned`              AS `pinned`,
          `msg`.`posted_at`           AS `postedAt`,
          `usr`.`username`            AS `postedBy`,
          `prf`.`display_name`        AS `displayName`,
