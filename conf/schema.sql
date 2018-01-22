@@ -220,20 +220,21 @@ CREATE TABLE `figment_redirect` (
 ) ENGINE XtraDB DEFAULT CHARACTER SET utf8 DEFAULT COLLATE latin1_swedish_ci;
 
 CREATE VIEW `figment_message_display` AS
-  SELECT `msg`.`formatted`          AS `message`,
-         `msg`.`posted_at`          AS `postedAt`,
-         `usr`.`username`           AS `postedBy`,
-         `prf`.`display_name`       AS `displayName`,
-         `avt`.`filename`           AS `avatar`,
-         `rpt`.`reply_to`           AS `replyingToMessage`,
-         `rpa`.`username`           AS `replyingToAuthor`,
-         count(`lik`.`liked_by`)    AS `likes`,
-         count(`dsl`.`disliked_by`) AS `dislikes`,
-         count(`rps`.`reposted_in`) AS `reposts`,
-         count(`rpl`.`reply`)       AS `replies`,
-         count(`ylk`.`liked_by`)    AS `youLikedIt`,
-         count(`yds`.`disliked_by`) AS `youDislikedIt`,
-         count(`yrp`.`reposted_in`) AS `youRepostedIt`
+  SELECT `msg`.`formatted`           AS `message`,
+         `msg`.`posted_at`           AS `postedAt`,
+         `usr`.`username`            AS `postedBy`,
+         `prf`.`display_name`        AS `displayName`,
+         `avt`.`filename`            AS `avatar`,
+         `rpt`.`reply_to`            AS `replyingToMessage`,
+         `rpa`.`username`            AS `replyingToAuthor`,
+         count(`lik`.`liked_by`)     AS `likes`,
+         count(`dsl`.`disliked_by`)  AS `dislikes`,
+         count(`rps`.`reposted_in`)  AS `reposts`,
+         count(`rpl`.`reply`)        AS `replies`,
+         count(`ylk`.`liked_by`)     AS `youLikedIt`,
+         count(`yds`.`disliked_by`)  AS `youDislikedIt`,
+         count(`ybm`.`bookmarked_by` AS `youBookmarkedIt`,
+         count(`yrp`.`reposted_in`)  AS `youRepostedIt`
     FROM      `figment_message` AS `msg`
     LEFT JOIN `figment_user`    AS `usr` ON `usr`.`user_id`    = `msg`.`posted_by`
     LEFT JOIN `figment_profile` AS `prf` ON `prf`.`user_id`    = `usr`.`user_id`
@@ -245,10 +246,11 @@ CREATE VIEW `figment_message_display` AS
     LEFT JOIN `figment_dislike` AS `dsl` ON `dsl`.`message`    = `msg`.`message_id`
     LEFT JOIN `figment_repost`  AS `rps` ON `rps`.`original`   = `msg`.`message_id`
     LEFT JOIN `figment_reply`   AS `rpl` ON `rpl`.`reply_to`   = `msg`.`message_id`
-    LEFT JOIN `figment_like`    AS `ylk` ON `ylk`.`message`    = `msg`.`message_id`   /* WHERE `ylk`.`liked_by`    = <curr_user_id> */
-    LEFT JOIN `figment_dislike` AS `yds` ON `yds`.`message`    = `msg`.`message_id`   /* WHERE `yds`.`disliked_by` = <curr_user_id> */
+    LEFT JOIN `figment_like`    AS `ylk` ON `ylk`.`message`    = `msg`.`message_id`   /* WHERE `ylk`.`liked_by`      = <curr_user_id> */
+    LEFT JOIN `figment_dislike` AS `yds` ON `yds`.`message`    = `msg`.`message_id`   /* WHERE `yds`.`disliked_by`   = <curr_user_id> */
+    LEFT JOIN `figment_bookmark`AS `ybm` ON `ybm`.`message_id` = `msg`.`message_id`   /* WHERE `ybm`.`bookmarked_by` = <curr_user_id> */
     LEFT JOIN `figment_repost`  AS `yrp` ON `yrp`.`message`    = `msg`.`message_id`
-    LEFT JOIN `figment_message` AS `yri` ON `yri`.`message_id` = `yrp`.`reposted_in`; /* WHERE `yri`.`posted_by`   = <curr_user_id> */
+    LEFT JOIN `figment_message` AS `yri` ON `yri`.`message_id` = `yrp`.`reposted_in`; /* WHERE `yri`.`posted_by`     = <curr_user_id> */
 
 CREATE VIEW `figment_engagement_display` AS
   SELECT `vue`.`views`                AS `views`,
