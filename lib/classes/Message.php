@@ -23,10 +23,6 @@
       $clicks,
       $elements;
 
-    public static function post($params)
-    {
-    } // post
-
     public static function delete($messageId)
     {
     } // delete
@@ -39,21 +35,9 @@
     {
     } // __conastruct
 
-    public function transloadImage($uri)
-    {
-    } // transloadImage
-
-    public function transloadWebPage($uri)
-    {
-    } // transloadWebPage
-
-    public function quoteMessage($messageId)
-    {
-    } // quoteMessage
-
-    public function formatCode($code, $language)
-    {
-    } // formatCode
+    ///////////////////////////////////////////////////////////////////////////
+    // Process URIs in raw message text ///////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     public function parseUris()
     {
@@ -64,131 +48,6 @@
       }
       return $results;
     } // parseUris
-
-    public function replaceUris($uris)
-    {
-      $uris = array_unique(array_filter($uris));
-      if (empty($uris)) {
-        return;
-      }
-      $hashes  = array();
-      $replace = array();
-      $baseUri = config('baseUri');
-      foreach ($uris as $uri) {
-        $hash      = md5($this->postedBy . microtime() . $uri);
-        $hashes[]  = (object) array('uri'  => $uri, 'hash' => $hash);
-        $replace[] = "<a href=\"" . $baseUri . "/redirect/" . $hash . "\" target=\"_blank\">" . $uri . "</a>";
-      }
-      str_replace($uris, $replace, $this->rawText);
-      return $hashes;
-    } // replaceUris
-
-    public function storeShortUris($hashes)
-    {
-      $pdo    = Db::connect('figment');
-      $values = array();
-      $msgId  = intval($this->messageId);
-      foreach ($hashes as $item) {
-        $values[] = "(" . $pdo->quote($item->uri, PDO::PARAM_STR) . "," . $pdo->quote($item->hash, PDO::PARAM_STR) . "," . $msgId . ")";
-      }
-      $sql = "INSERT IGNORE INTO `figment_redirect` (`uri`, `short_uri`, `in_message`) VALUES " . implode(",", $values);
-      $pdo->query($sql);
-    } // storeShortUris
-
-    public function parseHashtags()
-    {
-      $results = array();
-      preg_match_all('/\s#([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
-      foreach ($matches as $match) {
-        $results[] = $match[1];
-      }
-      return $results;
-    } // parseHashtags
-
-    public function lookupHashtags($hashtags = array())
-    {
-      $tags = array_unique(array_filter($hashtags));
-      if (empty($tags)) {
-        return array();
-      }
-      $pdo     = Db::connect('figment');
-      $quoted  = array();
-      $results = array();
-      foreach ($tags as $tag) {
-        $quoted[] = $pdo->quote($tag, PDO::PARAM_STR);
-      }
-      $sql  = "INSERT IGNORE INTO `figment_hashtag` (`content`) VALUES (" . implode("),(" . $quoted) . ")";
-      $stmt = $pdo->query($sql);
-      $sql  = "SELECT `hashtag_id`, `content` FROM `figment_hashtag` WHERE `content` IN (" . implode(",", $quoted) . ")";
-      $stmt = $pdo->query($sql);
-      while ($row = $stmt->fetch()) {
-        $results[$row->hashtag_id] = $row->content;
-      }
-      return $results;
-    } // getHashTagId
-
-    public function logHashtagUsage($hashtagIds = array())
-    {
-      $ids = array_unique(array_filter($hashtagIds));
-      if (empty($ids)) {
-        return;
-      }
-      $pdo    = Db::connect('figment');
-      $msgId  = intval($this->messageId);
-      $values = array();
-      foreach ($ids as $id) {
-        $values[] = "(" . $msgId . "," . intval($id) . ")";
-      }
-      $sql  = "INSERT INTO `figment_tagged` (`message`, `hashtag`) VALUES " . implode(",", $values);
-      $pdo->query($sql);
-    } // logHashtagUsage
-
-    public function parseMentions()
-    {
-      $results = array();
-      preg_match_all('/\s@([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
-      foreach ($matches as $match) {
-        $results[] = $match[1];
-      }
-      return $results;
-    } // parseMentions
-
-    public function getUserIds($usernames = array())
-    {
-    } // getUserIds
-
-    public function logMentions($userIds = array())
-    {
-    } // logMentions
-
-    public function parseEmoticons()
-    {
-      $results = array();
-      preg_match_all('/(:[0-9A-Za-z]*:)/', $this->rawText, $matches, PREG_SET_ORDER);
-      foreach ($matches as $match) {
-        $results[] = $match[1];
-      }
-      return $results;
-    } // parseEmoticons
-
-    public function lookupEmoticons($emoticons = array())
-    {
-    } // lookupEmoticons
-
-    public function checkLink($uri)
-    {
-      return true;
-    } // checkLink
-
-    public function parseRawText()
-    {
-      return (object) array(
-               'uris'      => $this->parseUris(),
-               'hashtags'  => $this->parseHashtags(),
-               'mentions'  => $this->parseMentions(),
-               'emoticons' => $this->parseEmoticons()
-             );
-    } // parseRawText
 
     public function uriIsQuote($uri)
     {
@@ -237,6 +96,214 @@
       }
       return null;
     } // getContentType
+
+    public function replaceUris($uris)
+    {
+      $uris = array_unique(array_filter($uris));
+      if (empty($uris)) {
+        return;
+      }
+      $hashes  = array();
+      $replace = array();
+      $baseUri = config('baseUri');
+      foreach ($uris as $uri) {
+        $hash      = md5($this->postedBy . microtime() . $uri);
+        $hashes[]  = (object) array('uri'  => $uri, 'hash' => $hash);
+        $replace[] = "<a href=\"" . $baseUri . "/redirect/" . $hash . "\" target=\"_blank\">" . $uri . "</a>";
+      }
+      str_replace($uris, $replace, $this->rawText);
+      return $hashes;
+    } // replaceUris
+
+    public function storeShortUris($hashes)
+    {
+      $pdo    = Db::connect('figment');
+      $values = array();
+      $msgId  = intval($this->messageId);
+      foreach ($hashes as $item) {
+        $values[] = "(" . $pdo->quote($item->uri, PDO::PARAM_STR) . "," . $pdo->quote($item->hash, PDO::PARAM_STR) . "," . $msgId . ")";
+      }
+      $sql = "INSERT IGNORE INTO `figment_redirect` (`uri`, `short_uri`, `in_message`) VALUES " . implode(",", $values);
+      $pdo->query($sql);
+    } // storeShortUris
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process hashtags in raw message text ///////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function parseHashtags()
+    {
+      $results = array();
+      preg_match_all('/\s#([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
+      foreach ($matches as $match) {
+        $results[] = $match[1];
+      }
+      return $results;
+    } // parseHashtags
+
+    public function lookupHashtags($hashtags = array())
+    {
+      $tags = array_unique(array_filter($hashtags));
+      if (empty($tags)) {
+        return array();
+      }
+      $pdo     = Db::connect('figment');
+      $quoted  = array();
+      $results = array();
+      foreach ($tags as $tag) {
+        $quoted[] = $pdo->quote($tag, PDO::PARAM_STR);
+      }
+      $sql  = "INSERT IGNORE INTO `figment_hashtag` (`content`) VALUES (" . implode("),(" . $quoted) . ")";
+      $stmt = $pdo->query($sql);
+      $sql  = "SELECT `hashtag_id`, `content` FROM `figment_hashtag` WHERE `content` IN (" . implode(",", $quoted) . ")";
+      $stmt = $pdo->query($sql);
+      while ($row = $stmt->fetch()) {
+        $results[$row->hashtag_id] = $row->content;
+      }
+      return $results;
+    } // getHashTagId
+
+    public function replaceHashtags()
+    {
+    } // replaceHashtags
+
+    public function logHashtagUsage($hashtagIds = array())
+    {
+      $ids = array_unique(array_filter($hashtagIds));
+      if (empty($ids)) {
+        return;
+      }
+      $pdo    = Db::connect('figment');
+      $msgId  = intval($this->messageId);
+      $values = array();
+      foreach ($ids as $id) {
+        $values[] = "(" . $msgId . "," . intval($id) . ")";
+      }
+      $sql  = "INSERT INTO `figment_tagged` (`message`, `hashtag`) VALUES " . implode(",", $values);
+      $pdo->query($sql);
+    } // logHashtagUsage
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process mentions in raw message text ///////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function parseMentions()
+    {
+      $results = array();
+      preg_match_all('/\s@([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
+      foreach ($matches as $match) {
+        $results[] = $match[1];
+      }
+      return $results;
+    } // parseMentions
+
+    public function getUserIds($usernames = array())
+    {
+    } // getUserIds
+
+    public function replaceMentions()
+    {
+    } // replaceMentions
+
+    public function logMentions($userIds = array())
+    {
+    } // logMentions
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process emoticons in raw message text //////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function parseEmoticons()
+    {
+      $results = array();
+      preg_match_all('/(:[0-9A-Za-z]*:)/', $this->rawText, $matches, PREG_SET_ORDER);
+      foreach ($matches as $match) {
+        $results[] = $match[1];
+      }
+      return $results;
+    } // parseEmoticons
+
+    public function lookupEmoticons($emoticons = array())
+    {
+    } // lookupEmoticons
+
+    public function replaceEmoticons()
+    {
+    } // replaceEmoticons
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process elements from remote websites //////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function transloadImage($uri)
+    {
+    } // transloadImage
+
+    public function fetchWebPage($uri)
+    {
+    } // fetchWebPage
+
+    public function getWebPageProperties()
+    {
+    } // getWebPageProperties
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process elements in POST request ///////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function getQuotedMessage($messageId)
+    {
+    } // getQuotedMessage
+
+    public function logRepost($messageId)
+    {
+    } // logRepost
+
+    public function formatCodeSnippet($code, $language)
+    {
+    } // formatCodeSnippet
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Process POST data //////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function parseRawText()
+    {
+      return (object) array(
+               'uris'      => $this->parseUris(),
+               'hashtags'  => $this->parseHashtags(),
+               'mentions'  => $this->parseMentions(),
+               'emoticons' => $this->parseEmoticons()
+             );
+    } // parseRawText
+
+    public function addElement($element)
+    {
+      if (!($element instanceof MessageElement)) {
+        throw new Exception(__METHOD__ . ' > Argument is not a MessageElement instance.');
+      }
+
+    } // addElement
+
+    public function sortElementsByWeight()
+    {
+    } // sortElementsByWeight
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Compose HTML for message display ///////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public function renderImage($filename, $width, $height)
+    {
+    } // renderImage
+
+    public function composeImagesLayout()
+    {
+    } // composeImagesLayout
+
+    public function composeWebPageLayout()
+    {
+    } // composeWebPageLayout
 
     public function composeLayout()
     {
