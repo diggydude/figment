@@ -65,7 +65,7 @@
         return MessageElement::TYPE_QUOTED_MESSAGE;
       }
       if ($this->uriIsYoutubeVideo() {
-        return MessageElement::TYPE_YOUTUBE_VIDEO);
+        return MessageElement::TYPE_YOUTUBE_VIDEO;
       }
       if (($curl = curl_init($uri)) === false) {
         throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
