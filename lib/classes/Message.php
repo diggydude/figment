@@ -23,13 +23,17 @@
       $clicks,
       $elements;
 
-    public static function delete($messageId)
+    public function delete($messageId)
     {
     } // delete
 
-    public static function load($messageId)
+    public function load($messageId)
     {
     } // load
+
+    public function save()
+    {
+    } // save
 
     public function __construct($messageId = 0)
     {
@@ -42,7 +46,7 @@
     public function parseUris()
     {
       $results = array();
-      preg_match_all('/http:\/\/(\S*)/', $this->rawText, $matches, PREG_SET_ORDER);
+      preg_match_all('/http:\/\/[\S]*/', $this->rawText, $matches, PREG_SET_ORDER);
       foreach ($matches as $match) {
         $results[] = $match[0];
       }
@@ -111,7 +115,7 @@
         $hashes[]  = (object) array('uri'  => $uri, 'hash' => $hash);
         $replace[] = "<a href=\"" . $baseUri . "/redirect/" . $hash . "\" target=\"_blank\">" . $uri . "</a>";
       }
-      str_replace($uris, $replace, $this->rawText);
+      $this->rawText = str_replace($uris, $replace, $this->rawText);
       return $hashes;
     } // replaceUris
 
@@ -163,8 +167,15 @@
       return $results;
     } // getHashTagId
 
-    public function replaceHashtags()
+    public function replaceHashtags($hashtags = array())
     {
+      $serach  = array();
+      $replace = array();
+      foreach ($hashtags as $tag) {
+        $search[]  = "#" . $tag;
+        $replace[] = "<a href=\"" . config('baseUri') . "/hashtag/" . $tag . "\">#" . $tag . "</a>";
+      }
+      $this->rawText = str_replace($search, $replace, $this->rawText);
     } // replaceHashtags
 
     public function logHashtagUsage($hashtagIds = array())
@@ -199,14 +210,49 @@
 
     public function getUserIds($usernames = array())
     {
+      $usernames = array_unique(array_filter($usernames));
+      if (empty($usernames)) {
+        return array();
+      }
+      $pdo    = Db::connect('figment');
+      $quoted = array();
+      foreach ($usernames as $name) {
+        $quoted[] = $pdo->quote($name, PDO::PARAM_STR);
+      }
+      $sql     = "SELECT `user_id`, `username` FROM `figment_user` WHERE `username` IN (" . implode(",", $quoted)  . ")";
+      $stmt    = $pdo->query($sql);
+      $results = array();
+      while ($row = $stmt->fetch()) {
+        $results[$row->user_id] = $row->username;
+      }
+      return $results;
     } // getUserIds
 
-    public function replaceMentions()
+    public function replaceMentions($usernames = array())
     {
+      $search  = array();
+      $replace = array();
+      foreach ($usernames as $name) {
+        $search[]  = "@" . $name;
+        $replace[] = "<a href=\"" . config('baseUri') . "/profile/" . $name . "\">@" . $name . "</a>";
+      }
+      $this->rawText = str_replace($search, $replace, $this->rawText);
     } // replaceMentions
 
     public function logMentions($userIds = array())
     {
+      $userIds = array_unique(array_filter($userIds));
+      if (empty($usernames)) {
+        return;
+      }
+      $pdo    = Db::connect('figment');
+      $msgId  = intval($this->messageId);
+      $values = array();
+      foreach ($userIds as $id) {
+        $values[] = "(" . $msgId . "," . intval($id) . ")";
+      }
+      $sql = "INSERT INTO `figment_mention` (`mentioned_in`, `mentioned`) VALUES " . implode(", ", $values);
+      $pdo->query($sql);
     } // logMentions
 
     ///////////////////////////////////////////////////////////////////////////
@@ -216,7 +262,7 @@
     public function parseEmoticons()
     {
       $results = array();
-      preg_match_all('/(:[0-9A-Za-z]*:)/', $this->rawText, $matches, PREG_SET_ORDER);
+      preg_match_all('/:([0-9A-Za-z]*):/', $this->rawText, $matches, PREG_SET_ORDER);
       foreach ($matches as $match) {
         $results[] = $match[1];
       }
@@ -225,10 +271,33 @@
 
     public function lookupEmoticons($emoticons = array())
     {
+      $emoticons = array_unique(array_filter($emoticons));
+      if (empty($emoticons)) {
+        return array();
+      }
+      $pdo    = Db::connect('figment');
+      $quoted = array();
+      foreach ($emoticons as $code) {
+        $quoted[] = $pdo->quote($code, PDO::PARAM_STR);
+      }
+      $sql     = "SELECT `code`, `filename` FROM `figment_emoticon` WHERE `code` IN (" . implode(", ", $quoted) . ")";
+      $stmt    = $pdo->query($sql);
+      $results = array();
+      while ($row = $stmt->fetch()) {
+        $results[$row->code] = $row->filename;
+      }
+      return $results;
     } // lookupEmoticons
 
-    public function replaceEmoticons()
+    public function replaceEmoticons($emoticons = array())
     {
+      $search  = array();
+      $replace = array();
+      foreach ($emoticons as $code => $filename) {
+        $search[]  = ":" . $code . ":";
+        $replace[] = "<img src=\"" . config('emoticonDir') . "/" . $filename . "\" alt=\"" . $code . "\" />";
+      }
+      $this->rawText = str_replace($search, $replace, $this->rawText);
     } // replaceEmoticons
 
     ///////////////////////////////////////////////////////////////////////////
@@ -237,14 +306,78 @@
 
     public function transloadImage($uri)
     {
+      $tmpFilename = config('tmpDir') . basename($uri);
+      if (($curl = curl_init($uri)) === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      $err = curl_setopt_array($curl,
+               array(
+                 // CURLOPT_RETURNTRANSFER => true,
+                 CURLOPT_FILE           => $tmpFilename
+               )
+             );
+      if ($err === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      // if (($content = curl_exec($curl)) === false) {
+      if (curl_exec($curl) === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      $hash = md5_file($tmpFilename);
+      rename($tmpFilename, config('uploadDir') . $hash);
+      return $hash;
     } // transloadImage
 
     public function fetchWebPage($uri)
     {
+      if (($curl = curl_init($uri)) === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      $err = curl_setopt_array($curl,
+               array(
+                 CURLOPT_RETURNTRANSFER => true
+               )
+             );
+      if ($err === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      if (($content = curl_exec($curl)) === false) {
+        throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
+      }
+      return $content;
     } // fetchWebPage
 
-    public function getWebPageProperties()
+    public function getWebPageProperties($html)
     {
+      $dom = new DOMDocument();
+      if ($dom->loadHTML($html) === false) {
+        throw new Exception(__METHOD__ . ' > Failed to load HTML.');
+      }
+      $xpath = new DOMXPath)$dom);
+      $title = trim($xpath->query('//head/title[1]/text()'));
+      if (strlen($title) == 0) {
+        $title = trim($xpath->query('//body/h1[1]/text()'));
+      }
+      if (strlen($title) == 0) {
+        $title = "Untitled Web Page";
+      }
+      $summary = trim($xpath->query('//head/meta[@name="description"][1]/@value'));
+      if (strlen($summary) == 0) {
+        $summary = trim($xpath->query('//body/p[1]/text()'));
+      }
+      if (strlen($summary) == 0) {
+        $summary = "No summary available.";
+      }
+      if (strlen($summary) > 256) {
+        $summary = substr($summary, 0, 256) . "...";
+      }
+      $leadImgSrc  = $xpath->query('//body/img[1]/@src');
+      $leadImgHash = $this->transloadImage($leadImgSrc);
+      return (object) array(
+               'title'     => $title,
+               'summary'   => $summary,
+               'leadImage' => $leadImgHash
+             );
     } // getWebPageProperties
 
     ///////////////////////////////////////////////////////////////////////////
@@ -253,14 +386,25 @@
 
     public function getQuotedMessage($messageId)
     {
+      $pdo  = Db::connect('figment');
+      $sql  = "SELECT `formatted` FROM `figment_message` WHERE `message_id` = " . intval($messageId);
+      $stmt = $pdo->query($sql);
+      $row  = $stmt->fetch();
+      return $row->formatted;
     } // getQuotedMessage
 
     public function logRepost($messageId)
     {
+      $pdo = Db::connect('figment');
+      $sql = "INSERT INTO `figment_repost` (`original`, `reposted_in`) VALUES (" . intval($messageId) . ", " . intval($this->messageId) . ")";
+      $pdo->query($sql);
     } // logRepost
 
     public function formatCodeSnippet($code, $language)
     {
+      $geshi = new GeSHi($code, $language);
+      $geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+      return $geshi->parse_code();
     } // formatCodeSnippet
 
     ///////////////////////////////////////////////////////////////////////////
@@ -282,11 +426,19 @@
       if (!($element instanceof MessageElement)) {
         throw new Exception(__METHOD__ . ' > Argument is not a MessageElement instance.');
       }
-
+      $this->elements[] = $element;
     } // addElement
 
     public function sortElementsByWeight()
     {
+      $_typeSort = function($a, $b)
+                   {
+                     if ($a->type == $b->type) {
+                       return 0;
+                     }
+                     return ($a->type < $b->type) ? -1 : 1;
+                   };
+      usort($this->elements, $_typeSort);
     } // sortElementsByWeight
 
     ///////////////////////////////////////////////////////////////////////////
@@ -297,13 +449,17 @@
     {
     } // renderImage
 
-    public function composeImagesLayout()
+    public function composeImagesLayout($elements = array())
     {
     } // composeImagesLayout
 
-    public function composeWebPageLayout()
+    public function composeWebPageLayout($element)
     {
     } // composeWebPageLayout
+
+    public function composeVideoLayout($element)
+    {
+    } // composeVideoLayout
 
     public function composeLayout()
     {
