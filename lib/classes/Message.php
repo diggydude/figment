@@ -354,16 +354,16 @@
         throw new Exception(__METHOD__ . ' > Failed to load HTML.');
       }
       $xpath = new DOMXPath)$dom);
-      $title = trim($xpath->query('//head/title[1]/text()'));
+      $title = trim($xpath->query('//title[1]/text()'));
       if (strlen($title) == 0) {
-        $title = trim($xpath->query('//body/h1[1]/text()'));
+        $title = trim($xpath->query('//h1[1]/text()'));
       }
       if (strlen($title) == 0) {
         $title = "Untitled Web Page";
       }
-      $summary = trim($xpath->query('//head/meta[@name="description"][1]/@value'));
+      $summary = trim($xpath->query('//meta[@name="description"][1]/@value'));
       if (strlen($summary) == 0) {
-        $summary = trim($xpath->query('//body/p[1]/text()'));
+        $summary = trim($xpath->query('//p[1]/text()'));
       }
       if (strlen($summary) == 0) {
         $summary = "No summary available.";
@@ -371,7 +371,7 @@
       if (strlen($summary) > 256) {
         $summary = substr($summary, 0, 256) . "...";
       }
-      $leadImgSrc  = $xpath->query('//body/img[1]/@src');
+      $leadImgSrc  = $xpath->query('//img[1]/@src');
       $leadImgHash = $this->transloadImage($leadImgSrc);
       return (object) array(
                'title'     => $title,
