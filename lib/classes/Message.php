@@ -445,12 +445,46 @@
     // Compose HTML for message display ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
-    public function renderImage($filename, $width, $height)
+    public function renderImage($src, $dest, $width, $height)
     {
+      $img = Image::fromFile($src);
+      $img->fit($width, $height);
+      $img->save($dest);
     } // renderImage
 
     public function composeImagesLayout($elements = array())
     {
+      $elements = array_unique(array_filter($elements));
+      $numElem  = count($elements);
+      if ($numElem == 0) {
+        return;
+      }
+      $renders = array();
+      ob_start();
+      switch ($numElem) {
+        case 1:
+          $renders[0] = $this->renderImage($elements[0]->filename, '', 0, 0);
+          include(config('tplDir') . '/inline_images/single.php');
+          break;
+        case 2:
+          $renders[0] = $this->renderImage($elements[0]->filename, '', 0, 0);
+          $renders[1] = $this->renderImage($elements[1]->filename, '', 0, 0);
+          include(config('tplDir') . '/inline_images/double.php');
+          break;
+        case 3:
+          $renders[0] = $this->renderImage($elements[0]->filename, '', 0, 0);
+          $renders[1] = $this->renderImage($elements[1]->filename, '', 0, 0);
+          $renders[2] = $this->renderImage($elements[2]->filename, '', 0, 0);
+          include(config('tplDir') . '/inline_images/triple.php');
+          break;
+        default:
+          $renders[0] = $this->renderImage($elements[0]->filename, '', 0, 0);
+          $renders[1] = $this->renderImage($elements[1]->filename, '', 0, 0);
+          $renders[2] = config('imgDir') . "more.png";
+          include(config('tplDir') . '/inline_images/more.php');
+          break;
+      }
+      return ob_get_clean();
     } // composeImagesLayout
 
     public function composeWebPageLayout($element)
