@@ -16,8 +16,15 @@
     $response->js  = $baseUri . "/client/js/figment.js";
     $response->css = $baseUri . "/client/css/figment.css"; 
     $controller    = Controller::create($route->controller);
-    $method        = (property_exists($controller, $method)) ? $route->method : "index";
-    call_user_func(array($controller, $method));
+    if ($route->method === null) {
+      call_user_func(array($controller, 'index'));
+    }
+    else if (method_exists($controller, $route->method)) {
+      call_user_func(array($controller, $route->method));
+    }
+    else {
+      call_user_func_array(array($controller, 'index'), array($route->method));
+    }
     $response->send();
     exit(0);
   }
