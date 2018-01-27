@@ -15,10 +15,11 @@
     $response->js  = $baseUri . "/client/js/jquery.js";
     $response->js  = $baseUri . "/client/js/figment.js";
     $response->css = $baseUri . "/client/css/figment.css"; 
-    $controller = Controller::create($route->controller);
-    $method     = (property_exists($controller, $method)) ? $route->method : "index";
+    $controller    = Controller::create($route->controller);
+    $method        = (property_exists($controller, $method)) ? $route->method : "index";
     call_user_func(array($controller, $method));
     $response->send();
+    exit(0);
   }
   catch (Exception $e) {
     $response->error(500);
