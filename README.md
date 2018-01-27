@@ -18,7 +18,7 @@ Requirements:
 * jQuery (http://jquery.com/)
 
 In addition, you'll need a text editor and an FTP client to perform a few initial setup tasks. Some
-commerical text editors, such as UltraEdit (https://www.ultraedit.com/, 30 day free trial) allow you
+commerical text editors such as UltraEdit (https://www.ultraedit.com/, 30 day free trial) allow you
 to open files directly from, and save them directly to, the FTP server. Alternately, you can use a
 separate text editor such as Notepad and a free FTP client such as Filezilla (https://filezilla-project.org/).
 
