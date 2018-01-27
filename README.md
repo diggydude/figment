@@ -23,6 +23,5 @@ to open files directly from, and save them directly to, the FTP server. Alternat
 separate text editor such as Notepad and a free FTP client such as Filezilla (https://filezilla-project.org/).
 
 If you're a developer and wish to modify the Figment database for your own purposes, you'll need
-a database administration tool such as phpMyAdmin (https://www.phpmyadmin.net/). Note that the Figment
-authors cannot provide any support if you modify the datbase schema or SQL queries!
-
+a database administration tool such as phpMyAdmin (https://www.phpmyadmin.net/). **Note that the Figment
+authors cannot provide any technical support for custom database schema or SQL query modifications!**
