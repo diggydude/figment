@@ -10,7 +10,7 @@
       if (preg_match($route->pattern, $uri, $matches) === 1) {
         $result = (object) array(
                     'controller' => $route->controller,
-                    'method'     => $matches[1]
+                    'method'     => (count($matches) > 0) ? $matches[1] : null
                   );
         break;
       }
