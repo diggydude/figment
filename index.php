@@ -2,16 +2,16 @@
 
   require_once(__DIR__ . '/conf/config.php');
 
-  $session = Session::instance();
-  $route   = getRoute($_SERVER['REQUEST_URI']);
+  $session  = Session::instance();
+  $route    = getRoute($_SERVER['REQUEST_URI']);
+  $pdo      = Db::connect('figment', config('database'));
+  $response = HtmlResponse::instance();
 
   if (!$route) {
     $response->error(404);
     exit(1);
   }
 
-  $pdo           = Db::connect('figment', config('database'));
-  $response      = HtmlResponse::instance();
   $baseUri       = config('baseUri');
   $response->js  = $baseUri . "/client/js/jquery.js";
   $response->js  = $baseUri . "/client/js/figment.js";
