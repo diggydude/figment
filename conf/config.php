@@ -10,9 +10,20 @@
   config('baseUri',    'http://example.com');
   config('timezone',   'America/Chicago');
   config('cookie',     (object) array(
-                         'path' => '/',
-                         'ttl'  => 60
+                         'path' => '/'
                         )
+  );
+  config('database',   (object) array(
+                         'host'     => 'localhost',
+                         'schema'   => 'dbName',
+                         'username' => 'username',
+                         'password' => 'password',
+						 'options'  => array(
+                                         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+										 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+										 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+						               )
+                       )
   );
   config('cache',      (object) array(
                          'session' => (object) array(
@@ -39,6 +50,7 @@
   config('libDir',     config('baseDir') . '/lib/');
   config('ctrlDir',    config('baseDir') . '/controllers/');
   config('tplDir',     config('baseDir') . '/templates/');
+  config('uploadDir',  config('baseDir') . '/client/images/uploads/');
   config('movedList',  config('dataDir') . 'moved.json');
 
   date_default_timezone_set(config('timezone'));
