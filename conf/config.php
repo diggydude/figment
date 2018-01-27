@@ -54,7 +54,7 @@
                          ),
                          (object) array(
                            'pattern'    => '/^\/hashtag\/([a-zA-Z0-9]*)$/',
-                           'controller' => 'feed'
+                           'controller' => 'hashtag'
                          ),
                          (object) array(
                            'pattern'    => '/^\/api\/([\w]*)/',
