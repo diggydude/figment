@@ -1,6 +1,8 @@
 <?php
 
+  require_once(__DIR__ . '/Db.php');
   require_once(__DIR__ . '/MessageElement.php');
+  require_once(__DIR__ . '/../vnd/geshi/geshi.php');
 
   class Message
   {
@@ -88,12 +90,12 @@
       if (($content = curl_exec($curl)) === false) {
         throw new Exception(__METHOD__ . ' > ' . curl_error($curl));
       }
-      foreach (file($content) as $line) {
-        if (stripos($line, 'content-type') === 0) {
-          if (stripos($line, 'html') !== false) {
+      foreach (explode("\r\n", $content) as $header) {
+        if (stripos($header, 'content-type') === 0) {
+          if (stripos($header, 'html') !== false) {
             return MessageElement::TYPE_WEB_PAGE;
           }
-          if (stripos($line, 'image') !== false) {
+          if (stripos($header, 'image') !== false) {
             return MessageElement::TYPE_REMOTE_IMAGE;
           }
         }
@@ -138,7 +140,7 @@
     public function parseHashtags()
     {
       $results = array();
-      preg_match_all('/\s#([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
+      preg_match_all('/#([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
       foreach ($matches as $match) {
         $results[] = $match[1];
       }
@@ -201,7 +203,7 @@
     public function parseMentions()
     {
       $results = array();
-      preg_match_all('/\s@([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
+      preg_match_all('/@([0-9A-Za-z]*)/', $this->rawText, $matches, PREG_SET_ORDER);
       foreach ($matches as $match) {
         $results[] = $match[1];
       }
@@ -295,7 +297,7 @@
       $replace = array();
       foreach ($emoticons as $code => $filename) {
         $search[]  = ":" . $code . ":";
-        $replace[] = "<img src=\"" . config('emoticonDir') . "/" . $filename . "\" alt=\"" . $code . "\" />";
+        $replace[] = "<img src=\"" . config('baseUri') . "/client/images/emoticons/" . $filename . "\" alt=\"" . $code . "\" />";
       }
       $this->rawText = str_replace($search, $replace, $this->rawText);
     } // replaceEmoticons
@@ -361,7 +363,7 @@
       if (strlen($title) == 0) {
         $title = "Untitled Web Page";
       }
-      $summary = trim($xpath->query('//meta[@name="description"][1]/@value'));
+      $summary = trim($xpath->query('//meta[@name="description"][1]/@content'));
       if (strlen($summary) == 0) {
         $summary = trim($xpath->query('//p[1]/text()'));
       }
