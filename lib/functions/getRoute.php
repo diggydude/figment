@@ -8,7 +8,10 @@
     $result = null;
     foreach ($routes as $route) {
       if (preg_match($route->pattern, $uri, $matches) === 1) {
-        $result = $route;
+        $result = (object) array(
+                    'controller' => $route->controller,
+                    'method'     => $matches[1]
+                  );
         break;
       }
     }

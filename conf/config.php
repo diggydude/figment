@@ -18,11 +18,11 @@
                          'schema'   => 'dbName',
                          'username' => 'username',
                          'password' => 'password',
-						 'options'  => array(
+                         'options'  => array(
                                          PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-										 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-										 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
-						               )
+                                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+                                         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+                                       )
                        )
   );
   config('cache',      (object) array(
@@ -41,6 +41,25 @@
                          'servers' => array(
                                         array('127.0.0.1', 11311)
                                       )
+                       )
+  );
+  config('routes',     array(
+                         (object) array(
+                           'pattern'    => '/^\/feed\/$/',
+                           'controller' => 'feed'
+                         ),
+                         (object) array(
+                           'pattern'    => '/^\/profile\/([a-zA-Z0-9]*)$/',
+                           'controller' => 'profile'
+                         ),
+                         (object) array(
+                           'pattern'    => '/^\/hashtag\/([a-zA-Z0-9]*)$/',
+                           'controller' => 'feed'
+                         ),
+                         (object) array(
+                           'pattern'    => '/^\/api\/([\w]*)/',
+                           'controller' => 'api'
+                         )
                        )
   );
   config('baseDir',    realpath(__DIR__ . '/..'));
