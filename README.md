@@ -16,3 +16,13 @@ Requirements:
 * A Memcached server. (Ask your hosting provider.)
 * GeSHi Generic Syntax Highlighter (http://qbnz.com/highlighter/)
 * jQuery (http://jquery.com/)
+
+In addition, you'll need a text editor and an FTP client to perform a few initial setup tasks. Some
+commerical text editors, such as UltraEdit (https://www.ultraedit.com/, 30 day free trial) allow you
+to open files directly from, and save them directly to, the FTP server. Alternately, you can use a
+separate text editor such as Notepad and a free FTP client such as Filezilla (https://filezilla-project.org/).
+
+If you're a developer and wish to modify the Figment database for your own purposes, you'll need
+a database administration tool such as phpMyAdmin (https://www.phpmyadmin.net/). Note that the Figment
+authors cannot provide any support if you modify the datbase schema or SQL queries!
+
