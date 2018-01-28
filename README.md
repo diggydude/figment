@@ -11,7 +11,7 @@ required for best results.
 Requirements:
 
 * A domain name and Web hosting account.
-* PHP 5.3 or higher.
+* PHP 5.6 or higher.
 * A MariaDB (preferred) or MySQL database account.
 * A Memcached server. (Ask your hosting provider.)
 * GeSHi Generic Syntax Highlighter (http://qbnz.com/highlighter/)
