@@ -4,14 +4,20 @@
 
   function getRoute($uri)
   {
+    $parts  = parse_url($uri);
+    $path   = trim($parts['path'], "/");
     $routes = config('routes');
     $result = null;
     foreach ($routes as $route) {
-      if (preg_match($route->pattern, $uri, $matches) === 1) {
-        $result = (object) array(
-                    'controller' => $route->controller,
-                    'method'     => (count($matches) > 0) ? $matches[1] : null
-                  );
+      if (preg_match($route->pattern, $path, $matches) === 1) {
+        $result = array('controller' => $matches[0]);
+        for ($i = 0; $i < count($route->components); $i++) {
+          $index = $i + 1;
+          if (isset($matches[$index])) {
+            $result[$route->components[$i]] = $matches[$index];
+          }
+        }
+        $result = (object) $result;
         break;
       }
     }

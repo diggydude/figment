@@ -20,8 +20,7 @@
                          'password' => 'password',
                          'options'  => array(
                                          PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-                                         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+                                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
                                        )
                        )
   );
@@ -45,20 +44,28 @@
   );
   config('routes',     array(
                          (object) array(
-                           'pattern'    => '/^\/feed\/$/',
-                           'controller' => 'feed'
+                           'pattern'    => '/^(feed)$/',
+                           'components' => array('controller')
                          ),
                          (object) array(
-                           'pattern'    => '/^\/profile\/([a-zA-Z0-9]*)$/',
-                           'controller' => 'profile'
+                           'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)\/([A-Za-z0-9]*)$/',
+                           'components' => array('controller', 'username', 'method')
                          ),
                          (object) array(
-                           'pattern'    => '/^\/hashtag\/([a-zA-Z0-9]*)$/',
-                           'controller' => 'hashtag'
+                           'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'username')
                          ),
                          (object) array(
-                           'pattern'    => '/^\/api\/([\w]*)/',
-                           'controller' => 'api'
+                           'pattern'    => '/^(hashtag)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'hashtag')
+                         ),
+                         (object) array(
+                           'pattern'    => '/^(api)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'module', 'uid', 'method')
+                         ),
+                         (object) array(
+                           'pattern'    => '/^(api)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'module', 'method')
                          )
                        )
   );
