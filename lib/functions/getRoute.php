@@ -17,6 +17,12 @@
           }
         }
         $result = (object) $result;
+        $result->responseType = $route->response;
+        if (property_exists($route, 'templates')
+              && property_exists($result, 'method')
+              && property_exists($route->templates, $result->method)) {
+          $result->template = $route->templates->{$result->method};
+        }
         break;
       }
     }

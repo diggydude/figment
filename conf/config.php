@@ -44,32 +44,64 @@
   );
   config('routes',     array(
                          (object) array(
+                           'pattern'    => '/^(message)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'method'),
+                           'response'   => 'json'
+                         ),
+                         (object) array(
                            'pattern'    => '/^(feed)$/',
-                           'components' => array('controller')
+                           'components' => array('controller'),
+                           'response'   => 'html',
+                           'templates'  => (object) array(
+                                             'index' => 'feed/index.php'
+                                           )
                          ),
                          (object) array(
                            'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'username', 'method')
+                           'components' => array('controller', 'username', 'method'),
+                           'response'   => 'html',
+                           'templates'  => (object) array(
+                                             'index'      => 'profile/index.php',
+                                             'navigator'  => 'profile/navigator.php',
+                                             'edit'       => 'profile/edit.php',
+                                             'editAvatar' => 'profile/editAvatar.php',
+                                             'editBanner' => 'profile/editBanner.php',
+                                             'editColors' => 'profile/editColors.php'
+                                           )
                          ),
                          (object) array(
                            'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'username')
+                           'components' => array('controller', 'username'),
+                           'response'   => 'html',
+                           'templates'  => (object) array(
+                                             'index' => 'profile/index.php'
+                                           )
                          ),
                          (object) array(
                            'pattern'    => '/^(hashtag)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'hashtag')
+                           'components' => array('controller', 'hashtag'),
+                           'response'   => 'html',
+                           'templates'  => (object) array(
+                                             'index' => 'hashtag/index.php'
+                                           )
                          ),
                          (object) array(
                            'pattern'    => '/^(api)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'module', 'uid', 'method')
+                           'components' => array('controller', 'module', 'uid', 'method'),
+                           'response'   => 'json'
                          ),
                          (object) array(
                            'pattern'    => '/^(api)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'module', 'method')
+                           'components' => array('controller', 'module', 'method'),
+                           'response'   => 'json'
                          ),
                          (object) array(
                            'pattern'    => '/^(user)\/([a-zA-Z0-9]*)$/',
-                           'components' => array('controller', 'method')
+                           'components' => array('controller', 'method'),
+                           'response'   => 'html',
+                           'templates'  => (object) array(
+                                             'login' => 'user/login.php'
+                                           )
                          )
                        )
   );
