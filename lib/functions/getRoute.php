@@ -9,7 +9,7 @@
     $result = null;
     foreach ($routes as $route) {
       if (preg_match($route->pattern, $path, $matches) === 1) {
-        $result = array('controller' => $matches[0]);
+        $result = array();
         for ($i = 0; $i < count($route->components); $i++) {
           $index = $i + 1;
           if (isset($matches[$index])) {
