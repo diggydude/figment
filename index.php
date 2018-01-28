@@ -32,7 +32,6 @@
     unset($route->controller);
     $params     = $route;
     $controller = Controller::create($controller, $params);
-    unset($route->controller);
     if (($method !== null) && method_exists($controller, $method)) {
       call_user_func(array($controller, $method));
     }
