@@ -4,8 +4,7 @@
 
   function getRoute($uri)
   {
-    $parts  = parse_url($uri);
-    $path   = trim($parts['path'], "/");
+    $path   = trim(parse_url($uri, PHP_URL_PATH), "/");
     $routes = config('routes');
     $result = null;
     foreach ($routes as $route) {
