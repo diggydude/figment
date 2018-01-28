@@ -48,7 +48,7 @@
                            'components' => array('controller')
                          ),
                          (object) array(
-                           'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)\/([A-Za-z0-9]*)$/',
+                           'pattern'    => '/^(profile)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
                            'components' => array('controller', 'username', 'method')
                          ),
                          (object) array(
@@ -66,6 +66,10 @@
                          (object) array(
                            'pattern'    => '/^(api)\/([a-zA-Z0-9]*)\/([a-zA-Z0-9]*)$/',
                            'components' => array('controller', 'module', 'method')
+                         ),
+                         (object) array(
+                           'pattern'    => '/^(user)\/([a-zA-Z0-9]*)$/',
+                           'components' => array('controller', 'method')
                          )
                        )
   );
