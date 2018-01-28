@@ -17,7 +17,7 @@
         exit(0);
       }
       $controller = Controller::create('feed');
-      call_user_func_array(array($controller, 'index'));
+      call_user_func(array($controller, 'index'));
       $response->send();
       exit(0);
     }
@@ -34,10 +34,10 @@
     $controller = Controller::create($controller, $params);
     unset($route->controller);
     if (($method !== null) && method_exists($controller, $method)) {
-      call_user_func_array(array($controller, $method), array($params));
+      call_user_func(array($controller, $method));
     }
     else {
-      call_user_func_array(array($controller, 'index'), array($params));
+      call_user_func(array($controller, 'index'));
     }
     $response->send();
     exit(0);
