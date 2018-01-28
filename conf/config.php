@@ -89,5 +89,6 @@
   require_once(config('libDir') . 'classes/Db.php');
   require_once(config('libDir') . 'classes/Session.php');
   require_once(config('libDir') . 'classes/HtmlResponse.php');
+  require_once(config('libDir') . 'classes/Controller.php');
 
 ?>
