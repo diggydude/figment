@@ -47,7 +47,7 @@
                          (object) array(
                            'pattern'      => '/^(message)\/([a-zA-Z0-9]*)$/',
                            'components'   => array('controller', 'method'),
-                           'responseTyep' => 'json'
+                           'responseType' => 'json'
                          ),
                          (object) array(
                            'pattern'      => '/^(feed)$/',
