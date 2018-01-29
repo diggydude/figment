@@ -12,10 +12,6 @@
         $response->redirect(config('baseUri') . '/user/login');
         exit(0);
       }
-      $params     = (object) array(
-                      'emthod' => 'index',
-                    );
-      $controller = Controller::create('feed', $params);
     }
     else {
       $controller = Controller::create($route->controller, $route);

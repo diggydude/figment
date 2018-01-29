@@ -22,8 +22,11 @@
       return $controller;
     } // create
 
-    protected function __construct($params)
+    protected function __construct($params = null)
     {
+      if ($params === null) {
+        $params = (object) array();
+      }
       $baseUri         = config('baseUri');
       $this->_method   = (property_exists($params, 'method'))   ? $params->method   : "index";
       $this->_template = (property_exists($params, 'template')) ? $params->template : "";
