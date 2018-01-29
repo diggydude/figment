@@ -2,7 +2,6 @@
 
   error_reporting(E_ALL ^ E_NOTICE);
   set_time_limit(120);
-  date_default_timezone_set(config('timezone'));
 
   require_once(realpath(__DIR__ . '/../lib/functions/config.php'));
 
@@ -115,6 +114,8 @@
   config('tplDir',     config('baseDir') . '/templates/');
   config('uploadDir',  config('baseDir') . '/client/images/uploads/');
   config('movedList',  config('dataDir') . 'moved.json');
+
+  date_default_timezone_set(config('timezone'));
 
   require_once(config('libDir') . 'functions/getRequestHeaders.php');
   require_once(config('libDir') . 'classes/Db.php');
