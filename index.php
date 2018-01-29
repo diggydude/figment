@@ -12,6 +12,9 @@
         $response->redirect(config('baseUri') . '/user/login');
         exit(0);
       }
+      else {
+        $controller = Controller::create('feed');
+      }
     }
     else {
       $controller = Controller::create($route->controller, $route);
