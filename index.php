@@ -8,6 +8,7 @@
     $route   = getRoute($_SERVER['REQUEST_URI']);
     if (($route === null) || !property_exists($route, 'controller')) {
       if ($session->username == "") {
+        $response = HtmlResponse::instance();
         $response->redirect(config('baseUri') . '/user/login');
         exit(0);
       }
@@ -23,6 +24,7 @@
     exit(0);
   }
   catch (Exception $e) {
+    $response = HtmlResponse::instance();
     $response->error(500);
     exit(1);
   }
