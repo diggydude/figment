@@ -28,9 +28,11 @@
         $params = (object) array();
       }
       $baseUri         = config('baseUri');
-      $this->_method   = (property_exists($params, 'method'))   ? $params->method   : "index";
+      $session         = Session::instance();
+      $this->_method   = (property_exists($params, 'method') && method_exists($this, $params->method))
+                       ? $params->method   : "index";
       $this->_template = (property_exists($params, 'template')) ? $params->template : "";
-      $this->_currUser = new User(Session::instance()->username);
+      $this->_currUser = new User($session->username);
       switch ($params->responseType) {
         case "html":
         default:
