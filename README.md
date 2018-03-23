@@ -10,7 +10,7 @@ large globalist corporate sites to undermine the Bill of Rights and the national
 United States and other nations, the creation of political echo chambers is inherent in the design
 of social media, and, as such, it poses a grave threat to open discourse worldwide. Moreover, the
 advent of social media has resulted in the severe retardation of people's real-world social skills
-and unleaseded a pandemic of Internet addiction.
+and unleashed a pandemic of Internet addiction.
 
 In light of these observations, I will be focusing my efforts in the following directions:
 
