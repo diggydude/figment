@@ -1,5 +1,34 @@
 # figment
 
+-----------------------------------------------------------------------------------------------------
+
+*** UPDATE *** (March 23, 2018)
+
+This project is cancelled. I now believe that not only is an alternate "social media" platform NOT
+the right solution, but "social media" is a bad idea, period. Even without the concerted efforts of
+large globalist corporate sites to undermine the Bill of Rights and the national sovereignty of the
+United States and other nations, the creation of political echo chambers is inherent in the design
+of social media, and, as such, it poses a grave threat to open discourse worldwide. Moreover, the
+advent of social media has resulted in the severe retardation of people's real-world social skills
+and created a pandemic of Internet addiction.
+
+In light of these facts will be focusing my efforts in the following directions:
+
+(1) I am permanently boycotting all Google and Facebook services, and attempting to degrade the
+    abilty of said entities to radically alter the social contract. This goal can be achieved by
+    eliminating revenue streams gained from tracking and profiling users and trading in private user
+    data, essentially defunding corporations that have more money and power than they can manage
+    responsibly. Towards that end, I urge everyone who reads this to install the uBlock Origin and
+    Privacy Badger plugins in all of their desktop and mobile browsers. Let's cut the enemies of
+    liberty off at the knees!
+
+(2) I am developing a new PHP dialup/telnet BBS platform that can be run on a cheap SoC board. Since
+    most of the abused features of the World Wide Web do not exist in those channels, it should be
+    fairly immune to abuse by powerful entities who seek to impose their radical agenda on the human
+    race. The repository for the php-retro-bbs project will be up shortly.
+
+-----------------------------------------------------------------------------------------------------
+
 Figment is an open source PHP platform for building your own private social networking site.
 
 If you would like to join this project, please e-mail James at therealdiggydude (at) gmail (dot) com.
