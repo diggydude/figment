@@ -15,7 +15,7 @@ and unleashed a pandemic of Internet addiction.
 In light of these observations, I will be focusing my efforts in the following directions:
 
 (1) I am permanently boycotting all Google and Facebook services, and attempting to degrade the
-    abilty of said entities to radically alter the social contract. This goal can be achieved by
+    ability of said entities to radically alter the social contract. This goal can be achieved by
     eliminating revenue streams gained from tracking and profiling users and trading in private user
     data, essentially defunding corporations that have more money and power than they can manage
     responsibly. Towards that end, I urge everyone who reads this to install the uBlock Origin and
