@@ -23,9 +23,10 @@ In light of these observations, I will be focusing my efforts in the following d
     liberty off at the knees!
 
 (2) I am developing a new PHP dialup/telnet BBS platform that can be run on a cheap SoC board. Since
-    most of the abused features of the World Wide Web do not exist in those channels, it should be
-    fairly immune to abuse by powerful entities who seek to impose their radical agenda on the human
-    race. The repository for the php-retro-bbs project will be up shortly.
+    most of the abused features of the World Wide Web -- not to mention its addictive trappings -- do
+    not exist in those channels, the platform should be fairly immune to abuse by powerful entities
+    who seek to impose their radical agenda on the human race. The repository for the php-retro-bbs
+    project will be available in the near future.
 
 -----------------------------------------------------------------------------------------------------
 
