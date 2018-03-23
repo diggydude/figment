@@ -10,9 +10,9 @@ large globalist corporate sites to undermine the Bill of Rights and the national
 United States and other nations, the creation of political echo chambers is inherent in the design
 of social media, and, as such, it poses a grave threat to open discourse worldwide. Moreover, the
 advent of social media has resulted in the severe retardation of people's real-world social skills
-and created a pandemic of Internet addiction.
+and unleaseded a pandemic of Internet addiction.
 
-In light of these facts, I will be focusing my efforts in the following directions:
+In light of these observations, I will be focusing my efforts in the following directions:
 
 (1) I am permanently boycotting all Google and Facebook services, and attempting to degrade the
     abilty of said entities to radically alter the social contract. This goal can be achieved by
